@@ -49,7 +49,9 @@
 !
       call CPU_TIME(tStart)
 
+
 *** ADD MATRIX MULTIPLICATION CODE HERE...USE LOOPS WITH COUNTERS i, j, AND k. ***
+
 
       call CPU_TIME(tEnd)
       write(iOut,1000) n,tEnd-tStart
