@@ -1,7 +1,9 @@
       Program PIB
 !
+!
 !     To compile this program using pgfortran, run the command:
 !           pgfortran -llapack -lblas -o pib.exe pib.f03
+!
 !
 !     This program carries out a variational calculation for a quantum
 !     particle-in-box modified by a linear potential. Specifically, the
@@ -12,7 +14,22 @@
 !
 !     where b and l are user-provided parameters.
 !
-!     Planck's constant and the particle mass are both taken to be 1.0.
+!     The reduced Planck's constant is taken as 1.0 (atomic units).
+!
+!     Job parameters are provided by a set of command line switches. These
+!     include:
+!           -nbasis N         N is the number of basis functions to use in the
+!                             calculation. The default is N=5.
+!           -mass m           m is a floating point number giving the particle
+!                             mass in atomic units. The default is R=1.0.
+!           -slope b          b is a floating point number giving the slope of
+!                             the linear potential inside the box. The default
+!                             is b=0.0.
+!           -length l         l is a floating point number giving the box
+!                             length. The default is l=1.0.
+!           -noprintarrays    This switch turns off (and -printarrays turns on)
+!                             array printing when the program runs. The default
+!                             is to print all matrices.
 !
 !
 !     The variational problem is solved in the particle-in-a-box
@@ -21,7 +38,7 @@
 !     particle-in-a-box eigenfunctions.
 !
 !
-!     H.P. Hratchian, 2016.
+!     H.P. Hratchian, 2016, 2021.
 !
 !
 !     Variable Declarations
