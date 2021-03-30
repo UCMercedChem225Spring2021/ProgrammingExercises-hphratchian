@@ -1,5 +1,8 @@
       Program PIB
 !
+!     To compile this program using pgfortran, run the command:
+!           pgfortran -llapack -lblas -o pib.exe pib.f03
+!
 !     This program carries out a variational calculation for a quantum
 !     particle-in-box modified by a linear potential. Specifically, the
 !     potential is given by:
