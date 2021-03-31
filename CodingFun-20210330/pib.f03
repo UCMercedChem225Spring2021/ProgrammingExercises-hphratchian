@@ -42,12 +42,13 @@
 !
 !
 !     Variable Declarations
+      USE iso_fortran_env
       Implicit None
-      Integer::i,NCmdLineArgs,NBasis
-      Real::l,b,mass,start_time_total,end_time_total,start_time_local,  &
-        end_time_local
-      Real,Dimension(:),Allocatable::HEVals
-      Real,Dimension(:,:),Allocatable::TMat,VMat,HMat,HEVecs
+      Integer(kind=int64)::i,NCmdLineArgs,NBasis
+      Real(kind=real64)::l,b,mass,start_time_total,end_time_total,  &
+        start_time_local,end_time_local
+      Real(kind=real64),Dimension(:),Allocatable::HEVals
+      Real(kind=real64),Dimension(:,:),Allocatable::TMat,VMat,HMat,HEVecs
       Logical::Read_CmdLine_Value,Read_CmdLine_l,Read_CmdLine_b,  &
         Read_CmdLine_Mass,Read_CmdLine_NBasis,Print_Arrays
       Character(Len=1024)::cmd_buffer
@@ -62,6 +63,7 @@
         1x,'Potential Slope = ',F10.3,/,  &
         1x,'Mass            = ',F10.3,/,  &
         1x,'NBasis          = ',I12,/)
+ 3000 Format(1x,'Ground State Energy = ',F10.3,' a.u.')
  8000 Format(1x,A,': ',F10.1,' s')
  9000 Format(/,1x,'Confused command line reading...',  &
         'found switch but unsure what to read next.')
@@ -78,12 +80,13 @@
       mass = Float(1)
       NBasis = 5
       Print_Arrays = .True.
-      NCmdLineArgs = command_argument_count()
       Read_CmdLine_Value = .False.
       Read_CmdLine_l     = .False.
       Read_CmdLine_b     = .False.
+      Read_CmdLine_mass  = .False.
+      NCmdLineArgs = command_argument_count()
       Do i = 1,NCmdLineArgs
-        Call Get_Command_Argument(i,cmd_buffer)
+        Call Get_Command_Argument(INT(i),cmd_buffer)
         cmd_buffer = AdjustL(cmd_buffer)
         If(Read_CmdLine_Value) then
           Read_CmdLine_Value = .False.
@@ -164,10 +167,11 @@
       Write(*,8000)'Time for H diagonalization',end_time_local - start_time_local
       If(Print_Arrays) then
         Call Print_Matrix_Full_Real(6,HEVals,  &
-          'Hamiltonian Eigen-Values:',NBasis,1)
+          'Hamiltonian Eigen-Values:',NBasis,1_int64)
         Call Print_Matrix_Full_Real(6,HEVecs,  &
           'Hamiltonian Eigen-Vectors:',NBasis,NBasis)
       endIf
+      Write(*,3000) HEVals(1)
 !
 !     Stop the total-job clock and report job time.
 !
@@ -189,13 +193,14 @@
 !
 !
 !     Variable Declarations
+      USE iso_fortran_env
       Implicit None
-      Integer,Intent(In)::NBasis
-      Real,Intent(In)::l,mass
-      Real,Dimension(NBasis,NBasis),Intent(InOut)::TMat
+      Integer(kind=int64),Intent(In)::NBasis
+      Real(kind=real64),Intent(In)::l,mass
+      Real(kind=real64),Dimension(NBasis,NBasis),Intent(InOut)::TMat
 !
-      Integer::i
-      Real::pi,Prefactor
+      Integer(kind=int64)::i
+      Real(kind=real64)::pi,Prefactor
 !
 !
 !     Initialize TMat to 0.0 and fill the diagonal.
@@ -223,13 +228,14 @@
 !
 !
 !     Variable Declarations
+      USE iso_fortran_env
       Implicit None
-      Integer,Intent(In)::NBasis
-      Real,Intent(In)::l,b
-      Real,Dimension(NBasis,NBasis),Intent(InOut)::VMat
+      Integer(kind=int64),Intent(In)::NBasis
+      Real(kind=real64),Intent(In)::l,b
+      Real(kind=real64),Dimension(NBasis,NBasis),Intent(InOut)::VMat
 !
-      Integer::i,j,IntTemp
-      Real::One,Pi,Prefactor,RealTemp
+      Integer(kind=int64)::i,j,IntTemp
+      Real(kind=real64)::One,Pi,Prefactor,RealTemp
 !
 !
 !     Initialize VMat to 0.0 and fill the diagonal.
@@ -269,14 +275,15 @@
 !
 !     Variable Declarations
 !
+      USE iso_fortran_env
       implicit none
-      integer,intent(in)::IOut,M,N
-      real,dimension(M,N),intent(in)::A
+      integer(kind=int64),intent(in)::IOut,M,N
+      Real(kind=real64),dimension(M,N),intent(in)::A
       character(len=*),intent(in)::Header
 !
 !     Local variables
-      integer,parameter::NColumns=5
-      integer::i,j,IFirst,ILast
+      integer(kind=int64),parameter::NColumns=5
+      integer(kind=int64)::i,j,IFirst,ILast
 !
  1000 Format(1x,A)
  2000 Format(5x,5(7x,I7))
@@ -303,15 +310,16 @@
 !     matrix with leading dimension N. It is assumed that A is sent here as
 !     an (N x N) array.
 !
+      USE iso_fortran_env
       Implicit None
-      Integer,Intent(In)::N
-      Real,Dimension(N,N),Intent(In)::A
-      Real,Dimension(N,N),Intent(Out)::A_EVecs
-      Real,Dimension(N),Intent(Out)::A_EVals
+      Integer(kind=int64),Intent(In)::N
+      Real(kind=real64),Dimension(N,N),Intent(In)::A
+      Real(kind=real64),Dimension(N,N),Intent(Out)::A_EVecs
+      Real(kind=real64),Dimension(N),Intent(Out)::A_EVals
 !
-      Integer::i,j,k,IError=1
-      Real::time1,time2
-      Real,Dimension(:),Allocatable::A_Symm,Temp_Vector
+      Integer(kind=int64)::i,j,k,IError=1
+      Real(kind=real64)::time1,time2
+      Real(kind=real64),Dimension(:),Allocatable::A_Symm,Temp_Vector
 !
 !     Do the work...
 !
@@ -327,7 +335,7 @@
       Call CPU_Time(time2)
       Write(*,*)' time2-time1: ',time2-time1
       Call CPU_Time(time1)
-      Call SSPEV('V','U',N,A_Symm,A_EVals,A_EVecs,N, &
+      Call DSPEV('V','U',N,A_Symm,A_EVals,A_EVecs,N, &
         Temp_Vector,IError)
       Call CPU_Time(time2)
       Write(*,*)' DSPEV Time: ',time2-time1
